@@ -1,0 +1,23 @@
+{
+  "name": "first-server",
+  "version": "1.0.0",
+  "description": "This is my first Node JS project.",
+  "license": "ISC",
+  "author": "Edgar Carreño Fonseca",
+  "type": "commonjs",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start-server": "nodemon app.js"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  },
+  "dependencies": {
+    "body-parser": "^2.2.2",
+    "ejs": "^5.0.1",
+    "express": "^5.2.1",
+    "express-handlebars": "3.0",
+    "pug": "^3.0.4"
+  }
+}
