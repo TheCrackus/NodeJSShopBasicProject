@@ -15,7 +15,8 @@ router.get(
  * /admin/products => GET
  * **/
 router.get(
-    '/products'
+    '/products',
+    adminController.getProducts
 );
 
 /** 

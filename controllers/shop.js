@@ -4,16 +4,48 @@ exports.getProducts = (req, res, next) => {
     Product.fecthProducts(
         products => {
             res.render(
-                'shop',
+                'shop/product-list',
+                {
+                    prods: products,
+                    pageTitle: 'All products',
+                    path: '/products'
+                }
+            );
+        }
+    );
+}
+
+exports.getIndex = (req, res, next) => {
+    Product.fecthProducts(
+        products => {
+            res.render(
+                'shop/index',
                 {
                     prods: products,
                     pageTitle: 'Shop',
-                    path: '/',
-                    hasProducts: products.length > 0,
-                    activeShop: true,
-                    productCSS: true
+                    path: '/'
                 }
             );
+        }
+    );
+}
+
+exports.getCart = (req, res, next) => {
+    res.render(
+        'shop/cart',
+        {
+            pageTitle: 'Your Cart',
+            path: '/cart'
+        }
+    );
+}
+
+exports.getCheckout = (req, res, next) => {
+    res.render(
+        'shop/checkout',
+        {
+            pageTitle: 'Checkout',
+            path: '/checkout'
         }
     );
 }
