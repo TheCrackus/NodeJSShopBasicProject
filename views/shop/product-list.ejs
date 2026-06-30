@@ -13,13 +13,14 @@
                             <h1 class="product__title"><%= prod.title %></h1>
                         </header>
                         <div class="card__image">
-                            <img src="<%= prod.imageUrl %>" alt="<%= product.title %>">
+                            <img src="<%= prod.imageUrl %>" alt="<%= prod.title %>">
                         </div>
                         <div class="card__content">
                             <h2 class="product__price"><%= prod.price %></h2>
                             <p class="product__description"><%= prod.description %></p>
                         </div>
                         <div class="card__actions">
+                            <a href="/products/<%= prod.id %>" class="btn">Details</a>
                             <form action="/add-to-cart" method="POST">
                                 <button class="btn">Add to Cart</button>
                             </form>
