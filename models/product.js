@@ -48,4 +48,11 @@ module.exports = class Product {
     static fecthProducts(data) {
         getProductsFromFile(data);
     }
+
+    static findProductById(id, data) {
+        getProductsFromFile(products => {
+            const product = products.find(p => p.id === id);
+            data(product);
+        });
+    }
 }
