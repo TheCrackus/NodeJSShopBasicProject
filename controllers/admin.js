@@ -2,13 +2,11 @@ const Product = require('../models/product');
 
 exports.getAddProduct = (req, res, next) => {
     res.render(
-        'admin/add-product',
+        'admin/edit-product',
         {
             pageTitle: 'Add product',
             path: '/admin/add-product',
-            formCCS: true,
-            productCCS: true,
-            activeAddProduct: true
+            editing: false
         }
     );
 }
@@ -19,6 +17,7 @@ exports.postAddProduct = (req, res, next) => {
     const price = req.body.price;
     const description = req.body.description;
     const product = new Product(
+        null,
         title,
         imageUrl,
         description,
@@ -26,6 +25,48 @@ exports.postAddProduct = (req, res, next) => {
     );
     product.save();
     res.redirect('/');
+}
+
+exports.getEditProduct = (req, res, next) => {
+    const editmode = req.query.edit;
+    if (!editmode) {
+        return res.redirect('/');
+    }
+    const prodId = req.params.productId;
+    Product.findProductById(
+        prodId, 
+        (prod) => {
+            if (!prod) {
+                return res.redirect('/');
+            }
+            res.render(
+                'admin/edit-product',
+                {
+                    pageTitle: 'Edit product',
+                    path: '/admin/edit-product',
+                    editing: editmode,
+                    prod: prod
+                }
+            );
+        }
+    );
+}
+
+exports.postEditProduct = (req, res, next) => {
+    const prodId = req.body.productId;
+    const updatedTitle = req.body.title;
+    const updatedPrice = req.body.price;
+    const updatedImageUrl = req.body.imageUrl;
+    const updatedDescription = req.body.description;
+    const updatedProd = new Product(
+        prodId, 
+        updatedTitle,
+        updatedImageUrl,
+        updatedDescription,
+        updatedPrice
+    );
+    updatedProd.save();
+    res.redirect('/admin/products');
 }
 
 exports.getProducts = (req, res, next) => {
