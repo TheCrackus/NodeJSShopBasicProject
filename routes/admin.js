@@ -37,4 +37,9 @@ router.post(
     adminController.postEditProduct
 );
 
+router.post(
+    '/delete-product',
+    adminController.deleteProducts
+);
+
 exports.routes = router;

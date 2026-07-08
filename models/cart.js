@@ -32,4 +32,20 @@ module.exports = class Cart {
             });
         });
     }
+
+    static deleteProductById(id, productPrice) {
+        fs.readFile(p, (error, fileContent) => {
+            if (error) {
+                return;
+            }
+            const updatedCart = { ...JSON.parse(fileContent) };
+            const prod = updatedCart.products.find(p => p.id === id);
+            const prodQuantity = prod.quantity;
+            updatedCart.products = updatedCart.products.filter(p => p.id !== id);
+            updatedCart.total = updatedCart.total - productPrice * prodQuantity;
+            fs.writeFile(p, JSON.stringify(updatedCart), (error) => {
+                console.log(error);
+            });
+        });
+    }
 }
