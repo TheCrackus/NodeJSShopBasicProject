@@ -28,6 +28,11 @@ router.post(
     shopController.postCart
 );
 
+router.post(
+    '/cart-delete-item',
+    shopController.postCartDeleteProduct
+);
+
 router.get(
     '/orders',
     shopController.getOrders

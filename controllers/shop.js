@@ -48,14 +48,6 @@ exports.getIndex = (req, res, next) => {
     );
 }
 
-exports.postCart = (req, res, next) => {
-    const prodId = req.body.productId;
-    Product.findProductById(prodId, (prod) => {
-        Cart.addProduct(prod.id, prod.price);
-    });
-    res.redirect('/cart');
-}
-
 exports.getCart = (req, res, next) => {
     Cart.getCart(cart => {
         Product.fecthProducts(products => {
@@ -75,6 +67,22 @@ exports.getCart = (req, res, next) => {
                 }
             );
         });
+    });
+}
+
+exports.postCart = (req, res, next) => {
+    const prodId = req.body.productId;
+    Product.findProductById(prodId, (prod) => {
+        Cart.addProduct(prod.id, prod.price);
+    });
+    res.redirect('/cart');
+}
+
+exports.postCartDeleteProduct = (req, res, next) => {
+    const prodId = req.body.productId;
+    Product.findProductById(prodId, prod => {
+        Cart.deleteProductById(prod.id, prod.price);
+        res.redirect('/cart');
     });
 }
 
