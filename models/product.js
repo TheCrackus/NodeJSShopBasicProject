@@ -1,7 +1,11 @@
+/**
+ * The next code works with JSON data into local files
+ */
+
+/**
 const fs = require('fs');
 const path = require('path');
 const Cart = require('./cart');
-
 const p = path.join(
     path.dirname(require.main.filename),
     'data',
@@ -30,7 +34,7 @@ module.exports = class Product {
         this.price = price;
     }
 
-    save() {
+save() {
         getProductsFromFile(
             products => {
                 if (this.id) {
@@ -75,3 +79,75 @@ module.exports = class Product {
         });
     }
 }
+ */
+
+/**
+ * The next code works with SQL database and MySQL server
+ */
+
+/**
+const db = require('../util/database');
+
+module.exports = class Product {
+    constructor(id, title, imageUrl, description, price) {
+        this.id = id;
+        this.title = title;
+        this.imageUrl = imageUrl;
+        this.description = description;
+        this.price = price;
+    }
+
+    save() {
+        return db.execute(
+            'INSERT INTO products(title, price, description, imageUrl) VALUES (?, ?, ?, ?)',
+            [this.title, this.price, this.description, this.imageUrl]
+        );
+    }
+
+    static fecthProducts(products) {
+        return db.execute('SELECT * FROM products');
+    }
+
+    static findProductById(id) {
+        return db.execute(
+            'SELECT * FROM products WHERE products.id = ?',
+            [id]
+        );
+    }
+}
+ */
+
+/**
+ * The next code works with Sequlize
+ */
+
+const Sequlize = require('sequelize');
+
+const sequalize = require('../util/database');
+
+const Product = sequalize.define(
+    'product',
+    {
+        id: {
+            type: Sequlize.INTEGER,
+            autoIncrement: true,
+            allowNull: false,
+            primaryKey: true
+        },
+        title: Sequlize.STRING,
+        price: {
+            type: Sequlize.DOUBLE,
+            allowNull: false
+        },
+        imageUrl: {
+            type: Sequlize.STRING,
+            allowNull: false
+        },
+        description: {
+            type: Sequlize.STRING,
+            allowNull: false
+        }
+    }
+);
+
+module.exports = Product;

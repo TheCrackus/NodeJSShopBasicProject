@@ -1,3 +1,8 @@
+/**
+ * The next code works with local JSON data files
+ */
+
+/**
 const fs = require('fs');
 const path = require('path');
 
@@ -63,3 +68,26 @@ module.exports = class Cart {
         });
     }
 }
+ */
+
+/**
+ * The next code works with Sequelize
+ */
+
+const Sequelize = require('Sequelize');
+
+const sequelize = require('../util/database');
+
+const Cart = sequelize.define(
+    'cart',
+    {
+        id: {
+            type: Sequelize.INTEGER,
+            autoIncrement: true,
+            allowNull: false,
+            primaryKey: true
+        }
+    }
+);
+
+module.exports = Cart;
