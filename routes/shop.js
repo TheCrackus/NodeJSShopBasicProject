@@ -40,7 +40,7 @@ router.get(
 
 router.post(
     '/create-order',
-    shopController.postCreateOrder
+    shopController.postOrder
 );
 
 module.exports = router;

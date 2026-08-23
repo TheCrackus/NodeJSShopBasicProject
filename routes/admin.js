@@ -39,7 +39,7 @@ router.post(
 
 router.post(
     '/delete-product',
-    adminController.deleteProducts
+    adminController.postDeleteProduct
 );
 
 exports.routes = router;

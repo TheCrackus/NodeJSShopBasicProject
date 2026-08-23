@@ -1,5 +1,5 @@
 const Product = require('../models/product');
-const Cart = require('../models/cart');
+//const Cart = require('../models/cart');
 
 /**
 * The next code works with JSON data into local files
@@ -174,6 +174,7 @@ exports.getProduct = (req, res, next) => {
  * The next code works with Sequelize
 */
 
+/**
 exports.getProducts = (req, res, next) => {
     Product.findAll()
         .then(products => {
@@ -345,4 +346,134 @@ exports.getOrders = (req, res, next) => {
             );
         })
         .catch();
+}
+*/
+
+/**
+ * The next code works with mongodb
+*/
+
+exports.getProducts = (req, res, next) => {
+    Product.getProducts()
+        .then(products => {
+            res.render(
+                'shop/product-list',
+                {
+                    prods: products,
+                    pageTitle: 'All products',
+                    path: '/products'
+                }
+            );
+        })
+        .catch(error => {
+            console.log(error);
+        });
+}
+
+exports.getIndex = (req, res, next) => {
+    Product.getProducts()
+        .then(products => {
+            res.render(
+                'shop/index',
+                {
+                    prods: products,
+                    pageTitle: 'Shop',
+                    path: '/'
+                }
+            );
+        })
+        .catch(error => {
+            console.log(error);
+        });
+}
+
+exports.getProduct = (req, res, next) => {
+    const prodId = req.params.productId;
+    Product.getProduct(prodId)
+        .then(product => {
+            res.render(
+                'shop/product-detail',
+                {
+                    prod: product,
+                    pageTitle: product.title,
+                    path: '/products'
+                }
+            );
+        })
+        .catch(error => {
+            console.log(error);
+        });
+}
+
+exports.postCart = (req, res, next) => {
+    const prodId = req.body.productId;
+
+    Product.getProduct(prodId)
+        .then(product => {
+            return req.user.addToCart(product);
+        })
+        .then(result => {
+            res.redirect('/cart');
+        })
+        .catch(error => {
+            console.log(error);
+        });
+}
+
+exports.getCart = (req, res, next) => {
+    req.user.getCart()
+        .then(products => {
+            console.log(products);
+            res.render(
+                'shop/cart',
+                {
+                    pageTitle: 'Your Cart',
+                    path: '/cart',
+                    prods: products
+                }
+            );
+        })
+        .catch(error => {
+            console.log(error);
+        });
+}
+
+exports.postCartDeleteProduct = (req, res, next) => {
+    const prodId = req.body.productId;
+    req.user.deleteItemFromCart(prodId)
+        .then(result => {
+            res.redirect('/cart');
+        })
+        .catch(error => {
+            console.log(error);
+        });
+}
+
+exports.postOrder = (req, res, next) => {
+    let fecthedCart;
+    let fetchedProducts;
+    req.user.addOrder()
+        .then(result => {
+            res.redirect('/orders');
+        })
+        .catch(error => {
+            console.log(error);
+        });
+}
+
+exports.getOrders = (req, res, next) => {
+    req.user.getOrders()
+        .then(orders => {
+            res.render(
+                'shop/orders',
+                {
+                    pageTitle: 'Your Orders',
+                    path: '/orders',
+                    orders: orders
+                }
+            );
+        })
+        .catch(error => {
+            console.log(error);
+        });
 }

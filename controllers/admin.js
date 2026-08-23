@@ -1,4 +1,11 @@
+/**
+ * The next code works with Sequelize
+ */
+
+/**
 const { where } = require('sequelize');
+ */
+
 const Product = require('../models/product');
 
 exports.getAddProduct = (req, res, next) => {
@@ -128,6 +135,7 @@ exports.postAddProduct = (req, res, next) => {
  * The next code works with Sequelize
  */
 
+/**
 exports.postAddProduct = (req, res, next) => {
     const title = req.body.title;
     const imageUrl = req.body.imageUrl;
@@ -217,6 +225,106 @@ exports.deleteProducts = (req, res, next) => {
         .then(product => {
             return product.destroy();
         })
+        .then(result => {
+            res.redirect('/admin/products');
+        })
+        .catch(error => {
+            console.log(error);
+        });
+}
+ */
+
+/**
+ * The next code works with mongodb
+ */
+
+exports.postAddProduct = (req, res, next) => {
+    const title = req.body.title;
+    const imageUrl = req.body.imageUrl;
+    const price = req.body.price;
+    const description = req.body.description;
+    const product = new Product(
+        title,
+        price,
+        description,
+        imageUrl,
+        null,
+        req.user._id
+    );
+    product.save()
+        .then(() => {
+            res.redirect('/admin/products');
+        }).catch(error => {
+            console.log(error);
+        });
+}
+
+exports.getProducts = (req, res, next) => {
+    Product.getProducts()
+        .then(products => {
+            res.render(
+                'admin/products',
+                {
+                    prods: products,
+                    pageTitle: 'Admin products',
+                    path: '/admin/products'
+                }
+            );
+        })
+        .catch(error => {
+            console.log(error);
+        });
+}
+
+exports.getEditProduct = (req, res, next) => {
+    const editmode = req.query.edit;
+    if (!editmode) {
+        return res.redirect('/');
+    }
+    const prodId = req.params.productId;
+    Product.getProduct(prodId)
+        .then(product => {
+            res.render(
+                'admin/edit-product',
+                {
+                    pageTitle: 'Edit product',
+                    path: '/admin/edit-product',
+                    editing: editmode,
+                    prod: product
+                }
+            );
+        })
+        .catch(error => {
+            console.log(error);
+        });
+}
+
+exports.postEditProduct = (req, res, next) => {
+    const prodId = req.body.productId;
+    const updatedTitle = req.body.title;
+    const updatedPrice = req.body.price;
+    const updatedImageUrl = req.body.imageUrl;
+    const updatedDescription = req.body.description;
+    const product = new Product(
+        updatedTitle,
+        updatedPrice,
+        updatedDescription,
+        updatedImageUrl,
+        prodId,
+        req.user._id
+    );
+    product.save()
+        .then(result => {
+            res.redirect('/admin/products');
+        })
+        .catch(error => {
+            console.log(error);
+        });
+}
+
+exports.postDeleteProduct = (req, res, next) => {
+    const prodId = req.body.productId;
+    Product.deleteProduct(prodId)
         .then(result => {
             res.redirect('/admin/products');
         })
