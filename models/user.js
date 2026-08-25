@@ -26,6 +26,7 @@ const User = sequelize.define(
  * The next code works with mongodb
  */
 
+/**
 const mongodb = require('mongodb');
 const getDb = require('../util/database').getDb;
 
@@ -208,5 +209,81 @@ class User {
             });
     }
 }
+ */
 
-module.exports = User;
+/**
+ * The next code works with mongoose
+ */
+
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+
+const userSchema = new Schema({
+    name: {
+        type: String,
+        required: true
+    },
+    email: {
+        type: String,
+        required: true
+    },
+    cart: {
+        items: [{
+            productId: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
+            quantity: { type: Number, required: true }
+        }]
+    }
+});
+
+userSchema.methods.addToCart = function (product) {
+    let cartProductIndex;
+    let updatedCartItems;
+    let newQuantity = 1;
+
+    if (this.cart) {
+        cartProductIndex = this.cart.items.findIndex(p => {
+            return p.productId.toString() === product._id.toString();
+        });
+        updatedCartItems = [...this.cart.items];
+    } else {
+        cartProductIndex = -1;
+        updatedCartItems = [];
+    }
+
+    if (cartProductIndex >= 0) {
+        newQuantity = this.cart.items[cartProductIndex].quantity + 1;
+        updatedCartItems[cartProductIndex].quantity = newQuantity;
+    } else {
+        updatedCartItems.push(
+            {
+                productId: product._id,
+                quantity: newQuantity
+            }
+        );
+    }
+
+    const updatedCart = {
+        items: updatedCartItems
+    }
+
+    this.cart = updatedCart;
+
+    return this.save();
+}
+
+userSchema.methods.deleteItemFromCart = function (productId) {
+    const updatedCartItems = this.cart.items.filter(item => {
+        return item.productId.toString() !== productId.toString();
+    });
+
+    this.cart.items = updatedCartItems;
+    return this.save();
+}
+
+userSchema.methods.clearCart = function () {
+    this.cart = { items: [] };
+
+    return this.save();
+}
+
+module.exports = mongoose.model('User', userSchema);

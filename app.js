@@ -23,7 +23,16 @@ const OrderItem = require('./models/order-item');
  * The next code wors with Mongo DB
  */
 
+/**
 const mongoConnection = require('./util/database').mongoConnection;
+const User = require('./models/user');
+*/
+
+/**
+ * The next code wors with mongoose
+ */
+
+const mongoose = require('mongoose');
 const User = require('./models/user');
 
 const app = express();
@@ -62,6 +71,7 @@ app.use((req, res, next) => {
  * The next code wors with mongodb
  */
 
+/**
 app.use((req, res, next) => {
     User.getUser('6a89fa989c95112d440c614f')
         .then(user => {
@@ -77,7 +87,22 @@ app.use((req, res, next) => {
             console.log(error);
         });
 });
+ */
 
+/**
+ * The next code wors with mongoose
+ */
+
+app.use((req, res, next) => {
+    User.findById('6a8cba058d888699da5de390')
+        .then(user => {
+            req.user = user;
+            next();
+        })
+        .catch(error => {
+            console.log(error);
+        });
+});
 
 app.use('/admin', adminData.routes);
 app.use(shopRoutes);
@@ -142,6 +167,33 @@ sequelize
  * The next code wors with Mongo DB
  */
 
+/**
 mongoConnection(() => {
     app.listen(3000);
 });
+*/
+
+mongoose
+    .connect(
+        'mongodb+srv://edgarcarrenofonseca_db_user:IT4KKujqjARKWXLh@cluster0.np1ji96.mongodb.net/shop?appName=Cluster0'
+    )
+    .then(result => {
+        User.findOne().then(user => {
+            if (!user) {
+                const user = new User({
+                    name: 'Edgar',
+                    email: 'edgarcarrenofonseca@outlook.com',
+                    cart: {
+                        items: []
+                    }
+                });
+
+                user.save();
+            }
+        });
+
+        app.listen(3000);
+    })
+    .catch(error => {
+        console.log(error);
+    });

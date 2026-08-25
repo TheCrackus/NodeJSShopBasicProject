@@ -39,6 +39,7 @@ module.exports = sequelize;
  * The next code works with mongodb
  */
 
+/**
 const mongodb = require('mongodb');
 const mongoClient = mongodb.MongoClient;
 
@@ -69,3 +70,4 @@ const getDb = () => {
 
 exports.mongoConnection = mongoConnection;
 exports.getDb = getDb;
+*/
