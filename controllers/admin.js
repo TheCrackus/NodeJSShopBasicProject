@@ -6,6 +6,11 @@
 const { where } = require('sequelize');
  */
 
+/**
+ * The next code works with JSON data into local files
+ */
+
+/**
 const Product = require('../models/product');
 
 exports.getAddProduct = (req, res, next) => {
@@ -19,11 +24,6 @@ exports.getAddProduct = (req, res, next) => {
     );
 }
 
-/**
- * The next code works with JSON data into local files
- */
-
-/**
 exports.postAddProduct = (req, res, next) => {
     const title = req.body.title;
     const imageUrl = req.body.imageUrl;
@@ -109,6 +109,19 @@ exports.deleteProducts = (req, res, next) => {
  */
 
 /**
+const Product = require('../models/product');
+
+exports.getAddProduct = (req, res, next) => {
+    res.render(
+        'admin/edit-product',
+        {
+            pageTitle: 'Add product',
+            path: '/admin/add-product',
+            editing: false
+        }
+    );
+}
+
 exports.postAddProduct = (req, res, next) => {
     const title = req.body.title;
     const imageUrl = req.body.imageUrl;
@@ -136,6 +149,19 @@ exports.postAddProduct = (req, res, next) => {
  */
 
 /**
+const Product = require('../models/product');
+
+exports.getAddProduct = (req, res, next) => {
+    res.render(
+        'admin/edit-product',
+        {
+            pageTitle: 'Add product',
+            path: '/admin/add-product',
+            editing: false
+        }
+    );
+}
+
 exports.postAddProduct = (req, res, next) => {
     const title = req.body.title;
     const imageUrl = req.body.imageUrl;
@@ -239,6 +265,19 @@ exports.deleteProducts = (req, res, next) => {
  */
 
 /**
+const Product = require('../models/product');
+
+exports.getAddProduct = (req, res, next) => {
+    res.render(
+        'admin/edit-product',
+        {
+            pageTitle: 'Add product',
+            path: '/admin/add-product',
+            editing: false
+        }
+    );
+}
+
 exports.postAddProduct = (req, res, next) => {
     const title = req.body.title;
     const imageUrl = req.body.imageUrl;
@@ -338,6 +377,18 @@ exports.postDeleteProduct = (req, res, next) => {
 /**
  * The next code works with mongoose
  */
+const Product = require('../models/product');
+
+exports.getAddProduct = (req, res, next) => {
+    res.render(
+        'admin/edit-product',
+        {
+            pageTitle: 'Add product',
+            path: '/admin/add-product',
+            editing: false
+        }
+    );
+}
 
 exports.postAddProduct = (req, res, next) => {
     const title = req.body.title;

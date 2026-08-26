@@ -1,10 +1,9 @@
-const Product = require('../models/product');
-
 /**
 * The next code works with JSON data into local files
 */
 
 /**
+const Product = require('../models/product');
 const Cart = require('../models/cart');
 
 exports.getProducts = (req, res, next) => {
@@ -118,6 +117,8 @@ exports.getCheckout = (req, res, next) => {
 */
 
 /**
+const Product = require('../models/product');
+
 exports.getProducts = (req, res, next) => {
     Product.fecthProducts()
         .then(([rows, filedData]) => {
@@ -176,6 +177,8 @@ exports.getProduct = (req, res, next) => {
 */
 
 /**
+const Product = require('../models/product');
+
 exports.getProducts = (req, res, next) => {
     Product.findAll()
         .then(products => {
@@ -355,6 +358,8 @@ exports.getOrders = (req, res, next) => {
 */
 
 /**
+const Product = require('../models/product');
+
 exports.getProducts = (req, res, next) => {
     Product.getProducts()
         .then(products => {
@@ -484,6 +489,7 @@ exports.getOrders = (req, res, next) => {
 /**
  * The next code works with mongoose
 */
+const Product = require('../models/product');
 const Order = require('../models/order');
 
 exports.getProducts = (req, res, next) => {
