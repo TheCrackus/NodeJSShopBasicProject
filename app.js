@@ -4,6 +4,11 @@ const shopRoutes = require('./routes/shop');
 const bodyParser = require('body-parser');
 const path = require('path');
 const errorController = require('./controllers/error');
+const authRoutes = require('./routes/auth');
+const session = require('express-session');
+const MongoDBStore = require('connect-mongodb-session')(session);
+
+const MONGODB_URI = 'mongodb+srv://edgarcarrenofonseca_db_user:IT4KKujqjARKWXLh@cluster0.np1ji96.mongodb.net/shop?appName=Cluster0';
 
 /**
  * The next code wors with sequelize
@@ -36,6 +41,10 @@ const mongoose = require('mongoose');
 const User = require('./models/user');
 
 const app = express();
+const store = new MongoDBStore({
+    uri: MONGODB_URI,
+    collection: 'sessions'
+});
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');
@@ -48,9 +57,15 @@ app.use(
     )
 );
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({
+    secret: 'my secret',
+    resave: false,
+    saveUninitialized: false,
+    store: store
+}));
 
 /**
- * The next code wors with sequelize
+ * The next code wors with sequelize not sessions
  */
 
 /**
@@ -68,7 +83,7 @@ app.use((req, res, next) => {
  */
 
 /**
- * The next code wors with mongodb
+ * The next code wors with mongodb not sessions
  */
 
 /**
@@ -90,9 +105,10 @@ app.use((req, res, next) => {
  */
 
 /**
- * The next code wors with mongoose
+ * The next code wors with mongoose wothout sessions
  */
 
+/**
 app.use((req, res, next) => {
     User.findById('6a8cba058d888699da5de390')
         .then(user => {
@@ -103,10 +119,30 @@ app.use((req, res, next) => {
             console.log(error);
         });
 });
+ */
+
+/**
+ * The next code wors with mongoose with sessions
+ */
+app.use((req, res, next) => {
+    if (!req.session.isLoggedIn || !req.session.userId) {
+        return next();
+    }
+
+    User.findById(req.session.userId)
+        .then(user => {
+            req.user = user;
+            return next();
+        })
+        .catch(error => {
+            console.log(error);
+        })
+});
+
 
 app.use('/admin', adminData.routes);
 app.use(shopRoutes);
-
+app.use(authRoutes);
 app.use(errorController.get404);
 
 /**
@@ -175,7 +211,7 @@ mongoConnection(() => {
 
 mongoose
     .connect(
-        'mongodb+srv://edgarcarrenofonseca_db_user:IT4KKujqjARKWXLh@cluster0.np1ji96.mongodb.net/shop?appName=Cluster0'
+        MONGODB_URI
     )
     .then(result => {
         User.findOne().then(user => {
