@@ -500,8 +500,7 @@ exports.getProducts = (req, res, next) => {
                 {
                     prods: products,
                     pageTitle: 'All products',
-                    path: '/products',
-                    isAuthenticated: req.session.isLoggedIn
+                    path: '/products'
                 }
             );
         })
@@ -518,8 +517,7 @@ exports.getIndex = (req, res, next) => {
                 {
                     prods: products,
                     pageTitle: 'Shop',
-                    path: '/',
-                    isAuthenticated: req.session.isLoggedIn
+                    path: '/'
                 }
             );
         })
@@ -537,8 +535,7 @@ exports.getProduct = (req, res, next) => {
                 {
                     prod: product,
                     pageTitle: product.title,
-                    path: '/products',
-                    isAuthenticated: req.session.isLoggedIn
+                    path: '/products'
                 }
             );
         })
@@ -572,8 +569,7 @@ exports.getCart = (req, res, next) => {
                 {
                     pageTitle: 'Your Cart',
                     path: '/cart',
-                    prods: products,
-                    isAuthenticated: req.session.isLoggedIn
+                    prods: products
                 }
             );
         })
@@ -606,7 +602,7 @@ exports.postOrder = (req, res, next) => {
 
             const order = new Order({
                 user: {
-                    name: req.user.name,
+                    email: req.user.email,
                     userId: req.user
                 },
                 products: products
@@ -635,8 +631,7 @@ exports.getOrders = (req, res, next) => {
                 {
                     pageTitle: 'Your Orders',
                     path: '/orders',
-                    orders: orders,
-                    isAuthenticated: req.session.isLoggedIn
+                    orders: orders
                 }
             );
         })

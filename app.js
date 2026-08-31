@@ -7,6 +7,8 @@ const errorController = require('./controllers/error');
 const authRoutes = require('./routes/auth');
 const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
+const csrf = require('csurf');
+const flash = require('connect-flash');
 
 const MONGODB_URI = 'mongodb+srv://edgarcarrenofonseca_db_user:IT4KKujqjARKWXLh@cluster0.np1ji96.mongodb.net/shop?appName=Cluster0';
 
@@ -45,6 +47,7 @@ const store = new MongoDBStore({
     uri: MONGODB_URI,
     collection: 'sessions'
 });
+const csrfProtection = csrf();
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');
@@ -63,6 +66,8 @@ app.use(session({
     saveUninitialized: false,
     store: store
 }));
+app.use(csrfProtection);
+app.use(flash());
 
 /**
  * The next code wors with sequelize not sessions
@@ -139,6 +144,11 @@ app.use((req, res, next) => {
         })
 });
 
+app.use((req, res, next) => {
+    res.locals.isAuthenticated = req.session.isLoggedIn;
+    res.locals.csrfToken = req.csrfToken();
+    next();
+});
 
 app.use('/admin', adminData.routes);
 app.use(shopRoutes);
@@ -214,20 +224,6 @@ mongoose
         MONGODB_URI
     )
     .then(result => {
-        User.findOne().then(user => {
-            if (!user) {
-                const user = new User({
-                    name: 'Edgar',
-                    email: 'edgarcarrenofonseca@outlook.com',
-                    cart: {
-                        items: []
-                    }
-                });
-
-                user.save();
-            }
-        });
-
         app.listen(3000);
     })
     .catch(error => {

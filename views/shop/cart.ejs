@@ -11,8 +11,9 @@
                     <li class="cart__item">
                         <p><%= p.productId.title %> (<%= p.quantity %>)</p>
                         <form action="/cart-delete-item" method="POST">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                             <button class="btn danger" type="submit">Delete</button>
-                            <input type="hidden" value="<%= p._id %>" name="productId">
+                            <input type="hidden" value="<%= p.productId._id %>" name="productId">
                         </form>
                     </li>
                 <% }) %>
@@ -20,6 +21,7 @@
             <hr>
             <div class="centered">
                 <form action="/create-order" method="POST">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                     <button type="submit" class="btn">Order now!</button>
                 </form>
             </div>
