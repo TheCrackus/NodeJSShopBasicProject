@@ -1,5 +1,18 @@
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
+const nodemailer = require('nodemailer');
+
+const getTransporter = () => {
+    return nodemailer.createTransport({
+        host: 'smtp-relay.brevo.com',
+        port: 587,
+        secure: false,
+        auth: {
+            user: process.env.BREVO_SMTP_USER,
+            pass: process.env.BREVO_SMTP_KEY,
+        }
+    });
+}
 
 exports.getLogIn = (req, res, next) => {
     let eMessage = req.flash('error');
@@ -52,7 +65,7 @@ exports.postLogIn = (req, res, next) => {
                 })
                 .catch(error => {
                     console.log(error);
-                    
+
                     res.redirect('/login');
                 });
         })
@@ -91,6 +104,7 @@ exports.postSignup = (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
     const confirmPassword = req.body.confirmPassword;
+    const transporter = getTransporter();
 
     User.findOne({
         email: email
@@ -114,7 +128,17 @@ exports.postSignup = (req, res, next) => {
                 })
                 .then(result => {
                     res.redirect('/login');
-                });
+
+                    return transporter.sendMail({
+                        from: 'edgarcarrenofonseca@outlook.com',
+                        to: email,
+                        subject: 'Sign up succeded!',
+                        html: '<h1>You successfully signed up!</h1>'
+                    });
+                })
+                .catch(error => {
+                    console.log(error);
+                });;
         })
         .catch(error => {
             console.log(error);

@@ -19,6 +19,7 @@
     "connect-flash": "^0.1.1",
     "connect-mongodb-session": "^5.0.0",
     "csurf": "^1.11.0",
+    "dotenv": "^17.4.2",
     "ejs": "^5.0.1",
     "express": "^5.2.1",
     "express-handlebars": "3.0",
@@ -26,6 +27,7 @@
     "mongodb": "^7.5.0",
     "mongoose": "^9.9.3",
     "mysql2": "^3.23.1",
+    "nodemailer": "^10.0.0",
     "pug": "^3.0.4",
     "sequelize": "^6.37.8"
   }

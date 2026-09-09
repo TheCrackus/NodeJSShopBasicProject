@@ -9,8 +9,9 @@ const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
 const csrf = require('csurf');
 const flash = require('connect-flash');
+const dotenv = require('dotenv');
 
-const MONGODB_URI = 'mongodb+srv://edgarcarrenofonseca_db_user:IT4KKujqjARKWXLh@cluster0.np1ji96.mongodb.net/shop?appName=Cluster0';
+dotenv.config();
 
 /**
  * The next code wors with sequelize
@@ -44,7 +45,7 @@ const User = require('./models/user');
 
 const app = express();
 const store = new MongoDBStore({
-    uri: MONGODB_URI,
+    uri: process.env.MONGODB_URI,
     collection: 'sessions'
 });
 const csrfProtection = csrf();
@@ -221,7 +222,7 @@ mongoConnection(() => {
 
 mongoose
     .connect(
-        MONGODB_URI
+        process.env.MONGODB_URI
     )
     .then(result => {
         app.listen(3000);
