@@ -5,7 +5,7 @@ This is a demo project based on Node JS courses that implements a basic shop.
 - MongoDB and Mongoose (commented code with SQL/MySQL/Sequelize)
 - Sessions and Cookies
 - Authentication
-- Validation (Users and capabilities)
+- Authorization (Users and capabilities)
 - Resetting password using Tokens
 - Validations (sign up/sign in)
 - File uploading
