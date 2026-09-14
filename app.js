@@ -70,6 +70,12 @@ app.use(session({
 app.use(csrfProtection);
 app.use(flash());
 
+app.use((req, res, next) => {
+    res.locals.isAuthenticated = req.session.isLoggedIn;
+    res.locals.csrfToken = req.csrfToken();
+    next();
+});
+
 /**
  * The next code wors with sequelize not sessions
  */
@@ -111,7 +117,7 @@ app.use((req, res, next) => {
  */
 
 /**
- * The next code wors with mongoose wothout sessions
+ * The next code wors with mongoose, no sessions
  */
 
 /**
@@ -128,7 +134,7 @@ app.use((req, res, next) => {
  */
 
 /**
- * The next code wors with mongoose with sessions
+ * The next code wors with mongoose and sessions
  */
 app.use((req, res, next) => {
     if (!req.session.isLoggedIn || !req.session.userId) {
@@ -137,24 +143,31 @@ app.use((req, res, next) => {
 
     User.findById(req.session.userId)
         .then(user => {
+            if (!user) {
+                return next();
+            }
+
             req.user = user;
             return next();
         })
         .catch(error => {
-            console.log(error);
+            next(new Error(error));
         })
-});
-
-app.use((req, res, next) => {
-    res.locals.isAuthenticated = req.session.isLoggedIn;
-    res.locals.csrfToken = req.csrfToken();
-    next();
 });
 
 app.use('/admin', adminData.routes);
 app.use(shopRoutes);
 app.use(authRoutes);
+
+app.use('/500', errorController.get500);
 app.use(errorController.get404);
+
+app.use((error, req, res, next) => {
+    res.status(500).render('500', {
+        pageTitle: 'Server error',
+        path: '/500'
+    });
+});
 
 /**
  * The next code wors with sequelize

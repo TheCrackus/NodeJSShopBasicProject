@@ -114,7 +114,9 @@ exports.postLogIn = (req, res, next) => {
                 });
         })
         .catch(error => {
-            console.log(error);
+            const e = new Error(error);
+            e.httpStatusCode = 500;
+            return next(e);
         });
 };
 
@@ -194,8 +196,10 @@ exports.postSignup = (req, res, next) => {
             });
         })
         .catch(error => {
-            console.log(error);
-        });;
+            const e = new Error(error);
+            e.httpStatusCode = 500;
+            return next(e);
+        });
 };
 
 exports.getReset = (req, res, next) => {
@@ -256,7 +260,9 @@ exports.postReset = (req, res, next) => {
                     });
                 })
                 .catch(error => {
-                    console.log(error);
+                    const e = new Error(error);
+                    e.httpStatusCode = 500;
+                    return next(e);
                 });
         }
     });
@@ -291,7 +297,9 @@ exports.getNewPassword = (req, res, next) => {
             );
         })
         .catch(error => {
-            console.log(error);
+            const e = new Error(error);
+            e.httpStatusCode = 500;
+            return next(e);
         });
 }
 
@@ -324,6 +332,8 @@ exports.postNewPassword = (req, res, next) => {
             res.redirect('/login');
         })
         .catch(error => {
-            console.log(error);
+            const e = new Error(error);
+            e.httpStatusCode = 500;
+            return next(e);
         });
 }
