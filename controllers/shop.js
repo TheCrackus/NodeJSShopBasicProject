@@ -495,15 +495,33 @@ const path = require('path');
 const fs = require('fs');
 const PDFDocument = require('pdfkit');
 
+const ITEMS_PER_PAGE = 1;
+
 exports.getProducts = (req, res, next) => {
+    const page = +req.query.page || 1;
+    let total;
+
     Product.find()
+        .countDocuments()
+        .then(numProds => {
+            total = numProds;
+            return Product.find()
+                .skip((page - 1) * ITEMS_PER_PAGE)
+                .limit(ITEMS_PER_PAGE);
+        })
         .then(products => {
             res.render(
                 'shop/product-list',
                 {
                     prods: products,
                     pageTitle: 'All products',
-                    path: '/products'
+                    path: '/products',
+                    currentPage: page,
+                    hasNextPage: ITEMS_PER_PAGE * page < total,
+                    hasPreviouspage: page > 1,
+                    nextPage: page + 1,
+                    previousPage: page - 1,
+                    lastPage: Math.ceil(total / ITEMS_PER_PAGE)
                 }
             );
         })
@@ -515,14 +533,31 @@ exports.getProducts = (req, res, next) => {
 }
 
 exports.getIndex = (req, res, next) => {
-    Product.find()
+    const page = +req.query.page || 1;
+    let total;
+
+    Product
+        .find()
+        .countDocuments()
+        .then(numProds => {
+            total = numProds;
+            return Product.find()
+                .skip((page - 1) * ITEMS_PER_PAGE)
+                .limit(ITEMS_PER_PAGE);
+        })
         .then(products => {
             res.render(
                 'shop/index',
                 {
                     prods: products,
                     pageTitle: 'Shop',
-                    path: '/'
+                    path: '/',
+                    currentPage: page,
+                    hasNextPage: ITEMS_PER_PAGE * page < total,
+                    hasPreviouspage: page > 1,
+                    nextPage: page + 1,
+                    previousPage: page - 1,
+                    lastPage: Math.ceil(total / ITEMS_PER_PAGE)
                 }
             );
         })
@@ -678,7 +713,7 @@ exports.getInvoice = (req, res, next) => {
 
                     res.setHeader('Content-Type', 'application/pdf');
                     res.setHeader(
-                        'Content-Disposition', 
+                        'Content-Disposition',
                         'inline; filename="' + invoiceName + '"'
                     );
 
