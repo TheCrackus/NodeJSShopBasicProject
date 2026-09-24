@@ -578,8 +578,8 @@ exports.postEditProduct = (req, res, next) => {
         });
 }
 
-exports.postDeleteProduct = (req, res, next) => {
-    const prodId = req.body.productId;
+exports.deleteProduct = (req, res, next) => {
+    const prodId = req.params.productId;
 
     Product.findById(prodId)
         .then(prod => {
@@ -610,11 +610,13 @@ exports.postDeleteProduct = (req, res, next) => {
             );
         })
         .then(result => {
-            res.redirect('/admin/products');
+            res.status(200).json({
+                message: "Success!"
+            });
         })
         .catch(error => {
-            const e = new Error(error);
-            e.httpStatusCode = 500;
-            return next(e);
+            res.status(200).json({
+                message: "Deleting product failed!"
+            });
         });
 }
