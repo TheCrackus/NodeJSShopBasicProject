@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const adminData = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
@@ -9,10 +10,7 @@ const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
 const csrf = require('csurf');
 const flash = require('connect-flash');
-const dotenv = require('dotenv');
 const multer = require('multer');
-
-dotenv.config();
 
 /**
  * The next code wors with sequelize

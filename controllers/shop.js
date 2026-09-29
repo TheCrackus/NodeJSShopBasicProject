@@ -494,6 +494,7 @@ const Order = require('../models/order');
 const path = require('path');
 const fs = require('fs');
 const PDFDocument = require('pdfkit');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 const ITEMS_PER_PAGE = 2;
 
@@ -530,7 +531,7 @@ exports.getProducts = (req, res, next) => {
             e.httpStatusCode = 500;
             return next(e);
         });
-}
+};
 
 exports.getIndex = (req, res, next) => {
     const page = +req.query.page || 1;
@@ -566,7 +567,7 @@ exports.getIndex = (req, res, next) => {
             e.httpStatusCode = 500;
             return next(e);
         });
-}
+};
 
 exports.getProduct = (req, res, next) => {
     const prodId = req.params.productId;
@@ -586,7 +587,7 @@ exports.getProduct = (req, res, next) => {
             e.httpStatusCode = 500;
             return next(e);
         });
-}
+};
 
 exports.postCart = (req, res, next) => {
     const prodId = req.body.productId;
@@ -603,7 +604,7 @@ exports.postCart = (req, res, next) => {
             e.httpStatusCode = 500;
             return next(e);
         });
-}
+};
 
 exports.getCart = (req, res, next) => {
     req.user
@@ -624,7 +625,7 @@ exports.getCart = (req, res, next) => {
             e.httpStatusCode = 500;
             return next(e);
         });
-}
+};
 
 exports.postCartDeleteProduct = (req, res, next) => {
     const prodId = req.body.productId;
@@ -637,9 +638,70 @@ exports.postCartDeleteProduct = (req, res, next) => {
             e.httpStatusCode = 500;
             return next(e);
         });
-}
+};
 
-exports.postOrder = (req, res, next) => {
+exports.getCheckout = (req, res, next) => {
+    let products;
+    let total = 0;
+    req.user
+        .populate('cart.items.productId')
+        .then(user => {
+            products = user.cart.items;
+
+            products.forEach(p => {
+                total += p.quantity * p.productId.price;
+            });
+
+            return stripe.checkout.sessions.create({
+                payment_method_types: ['card'],
+                line_items: products.map(p => {
+                    return {
+                        price_data: {
+                            currency: 'mxn',
+                            product_data: {
+                                name: p.productId.title,
+                                description: p.productId.description
+                            },
+                            unit_amount: Math.round(
+                                p.productId.price * 100
+                            )
+                        },
+                        quantity: p.quantity
+                    };
+                }),
+                mode: 'payment',
+                success_url:
+                    req.protocol +
+                    '://' +
+                    req.get('host') +
+                    '/checkout/success',
+                cancel_url:
+                    req.protocol +
+                    '://' +
+                    req.get('host') +
+                    '/checkout/cancel'
+            });
+        })
+        .then(session => {
+            res.render(
+                'shop/checkout',
+                {
+                    path: '/checkout',
+                    pageTitle: 'Checkout',
+                    prods: products,
+                    totalSum: total,
+                    sessionUrl: session.url
+                }
+            );
+        })
+        .catch(error => {
+            const e = new Error(error);
+            e.httpStatusCode = 500;
+            return next(e);
+        });
+};
+
+exports.getCheckoutSuccess = (req, res, next) => {
     req.user
         .populate('cart.items.productId')
         .then(user => {
@@ -671,7 +733,7 @@ exports.postOrder = (req, res, next) => {
             e.httpStatusCode = 500;
             return next(e);
         });
-}
+};
 
 exports.getOrders = (req, res, next) => {
     Order.find({
@@ -692,7 +754,7 @@ exports.getOrders = (req, res, next) => {
             e.httpStatusCode = 500;
             return next(e);
         });
-}
+};
 
 exports.getInvoice = (req, res, next) => {
     const orderId = req.params.orderId;
@@ -755,4 +817,4 @@ exports.getInvoice = (req, res, next) => {
             e.httpStatusCode = 500;
             return next(e);
         });
-}
+};
